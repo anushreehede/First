@@ -1,21 +1,23 @@
 package math;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Arrays;
 public class Calc {
 	private final int size=250;
-    private char[] Stack;
+	private int top=-1;
+    private char[] Stack=new char[50];
     private int intStack[]= new int[50];
-    private int top=-1;
-    private char[] expr;
-    private char[] post;
+    private List<Character> expr = new ArrayList<Character>(50);
+    private List<Character> post = new ArrayList<Character>(50);
     
     public void getData()
     {
     	Scanner input = new Scanner(System.in);
     	String str=input.nextLine();
-     	expr = str.toCharArray();
-     	/*for(int i=0;i<token.length;++i)
-     		expr[i]= token[i];
-     	expr[token.length]='\0';*/
+    	for(int i = 0; i<str.length();i++){
+            expr.add(str.charAt(i));
+        }
      	
     }
 	public int Push(char ele)
@@ -72,70 +74,66 @@ public class Calc {
 	}
 	public void insertRight(int pos)
 	{
-		int i,j,right,left,f;
+		int j,right,left,f;
 		right=0;left=0; f=0;
-		for(j=pos+1;j<expr.length;++j)
+		for(j=pos+1;j<expr.size();++j)
 		{
-			if(expr[j]=='(')
+			if(expr.get(j)=='(')
 				++left;
-			if(expr[j]==')')
+			if(expr.get(j)==')')
 				++right;
 			if(right==left)
 			{f=1; break;}
 		}
 		if(f==1)
 		{
-			for(i=expr.length;i>j;--i)
-				expr[i+1]=expr[i];
-			expr[j+1]=')';
+			expr.add(j+1,')');
 		}
 		return;
 	}
 	public void insertLeft(int pos)
 	{
-		int i,j,right,left,f;
+		int j,right,left,f;
 		right=0;left=0; f=0;
 		for(j=pos-1;j>=0;--j)
 		{
-			if(expr[j]=='(')
+			if(expr.get(j)=='(')
 				++left;
-			if(expr[j]==')')
+			if(expr.get(j)==')')
 				++right;
 		    if(right==left)
 			{f=1; break;}
 		}
 		if(f==1)
 		{
-			for(i=expr.length;i>=j;--i)
-				expr[i+1]=expr[i];
-			expr[j+1]='(';
+			expr.add(j,'(');
 		}
 		return;
 	}
 	public void parenth()
 	{
 		int i;
-		for(i=0;i<expr.length;++i)
+		for(i=0;i<expr.size();++i)
 		{
-			if(expr[i]=='^')
+			if(expr.get(i)=='^')
 			{
 				insertRight(i);
 				insertLeft(i);
 				++i;
 			}
 		}
-		for(i=0;i<expr.length;++i)
+		for(i=0;i<expr.size();++i)
 		{
-			if(expr[i]=='*'||expr[i]=='/')
+			if(expr.get(i)=='*'||expr.get(i)=='/')
 			{
 				insertRight(i);
 				insertLeft(i);
 				++i;
 			}
 		}
-		for(i=0;i<expr.length;++i)
+		for(i=0;i<expr.size();++i)
 		{
-			if(expr[i]=='-'||expr[i]=='+')
+			if(expr.get(i)=='-'||expr.get(i)=='+')
 			{
 				insertRight(i);
 				insertLeft(i);
@@ -148,49 +146,49 @@ public class Calc {
 	{
 		int i,j=0,c;
 		char ch;
-		for(i=0;i<expr.length;++i)
+		for(i=0;i<expr.size();++i)
 			{
-				if(expr[i]>='0' && expr[i]<='9')
+				if(expr.get(i)>='0' && expr.get(i)<='9')
 				{
-					post[i+1]=expr[i];
+				    post.add(j,expr.get(i));
 					++j;
 				}
-				else if(expr[i]=='(' || expr[i]=='+' || expr[i]=='-'||expr[i]=='*'||expr[i]=='/'||expr[i]=='^' )
+				else if(expr.get(i)=='(' || expr.get(i)=='+' || expr.get(i)=='-'||expr.get(i)=='*'||expr.get(i)=='/'||expr.get(i)=='^' )
 				{
-					c=Push(expr[i]);
+					c=Push(expr.get(i));
 					if(c==-1) break;
 				}
-				else if(expr[i]==')')
+				else if(expr.get(i)==')')
 				{
 					while(Stack[top]!='(')
 					{
 						ch=Pop();
-						post[j]=ch;
+						post.add(j,ch);
 						++j;
 					}
 					ch=Pop();
 				}
 				else continue;
 			}
-		post[j]='\0';
+		post.add(j,'\0');
 	    //System.out.println(post+"\n");
 	}
 	public int evaluate()
 	{
 		int i,val,lue,num1,num2,c;
-		for(i=0;post[i]!='\0';++i)
+		for(i=0;post.get(i)!='\0';++i)
 			{
-				if(post[i]>='0' && post[i]<='9')
+				if(post.get(i)>='0' && post.get(i)<='9')
 				{
-					lue=post[i]-48;
+					lue=post.get(i)-48;
 					c=Push_calc(lue);
 					if(c==-1) break;
 				}
-				else if(post[i]=='(' || post[i]=='+' || post[i]=='-'||post[i]=='*'||post[i]=='/'||post[i]=='^' )
+				else if(post.get(i)=='(' || post.get(i)=='+' || post.get(i)=='-'||post.get(i)=='*'||post.get(i)=='/'||post.get(i)=='^' )
 				{
 					num1=Pop_calc();
 					num2=Pop_calc();
-					switch(post[i])
+					switch(post.get(i))
 					{
 					case '+': val=num2+num1; break;
 					case '-': val=num2-num1; break;
@@ -207,3 +205,4 @@ public class Calc {
 	}
 
 }
+
