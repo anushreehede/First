@@ -1,24 +1,22 @@
 package math;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+//import java.util.Scanner;
 import java.util.Arrays;
 public class Calc {
 	private final int size=250;
 	private int top=-1;
     private char[] Stack=new char[50];
     private int intStack[]= new int[50];
-    private List<Character> expr = new ArrayList<Character>(50);
-    private List<Character> post = new ArrayList<Character>(50);
+    private List<Character> expr = new ArrayList<Character>(100);
+    private List<Character> post = new ArrayList<Character>(100);
     
-    public void getData()
+    public void getData(String str)
     {
-    	Scanner input = new Scanner(System.in);
-    	String str=input.nextLine();
+    	//Scanner input = new Scanner(System.in);
     	for(int i = 0; i<str.length();i++){
             expr.add(str.charAt(i));
         }
-     	
     }
 	public int Push(char ele)
 	{
@@ -203,6 +201,4 @@ public class Calc {
 			}
 		return intStack[top];
 	}
-
 }
-
