@@ -8,6 +8,39 @@ char Stack[50];
 int intStack[50];
 int top=-1;
 char post[100];
+int validateChar(char e[])
+{
+	int f=0;
+	for(int i=0;e[i]!='\0';++i)
+	{
+		if((e[i]>='0'&&e[i]<='9') || e[i]=='+' || e[i]=='-'|| e[i]=='*'|| e[i]=='/'|| e[i]=='^')
+			f=0;
+		else {f=1; break;}
+	}
+	if(f==1) return -1;
+	else return 0;
+}
+int validateExpr(char e[])
+{
+	int f=0;
+	if(e[0]<'0' || e[0]>'9') return -1;
+	for(int i=1;e[i]!='\0';++i)
+	{
+		if(e[i]>='0'&&e[i]<='9')
+		{
+			if((e[i+1]>='0'&&e[i+1]<='9') || (e[i-1]>='0'&&e[i-1]<='9'))
+			{f=1; break;}
+		}
+		if(e[i]=='+' || e[i]=='-'|| e[i]=='*'|| e[i]=='/'|| e[i]=='^')
+		{
+			if((e[i+1]=='+' || e[i+1]=='-'|| e[i+1]=='*'|| e[i+1]=='/'|| e[i+1]=='^') || 
+				(e[i-1]=='+' || e[i-1]=='-'|| e[i-1]=='*'|| e[i-1]=='/'|| e[i-1]=='^'))
+				{f=1; break;}
+		}
+	}
+	if(f==1) return -1;
+	else return 0;
+}
 int Push(char ele)
 {
 	if (top==size-1)
@@ -132,7 +165,7 @@ void parenth(char expr[])
 			++i;
 		}
 	}
-	cout<<expr<<"\n";
+	//cout<<expr<<"\n";
 }
 void makePostfix(char expr[])
 {
@@ -142,8 +175,8 @@ void makePostfix(char expr[])
 		{
 			if(expr[i]>='0' && expr[i]<='9')
 			{
-				post[j]=expr[i];
-				++j;
+			  post[j]=expr[i];
+			  ++j;
 			}
 			else if(expr[i]=='(' || expr[i]=='+' || expr[i]=='-'||expr[i]=='*'||expr[i]=='/'||expr[i]=='^' )
 			{
@@ -163,7 +196,7 @@ void makePostfix(char expr[])
 			else continue;
 		}
 		post[j]='\0';
-		cout<<post<<"\n";
+		//cout<<post<<"\n";
 }
 int evaluate()
 {
@@ -197,34 +230,25 @@ int evaluate()
 	if(c==-1) return c;
 	else return intStack[top];
 }
-void main()
+int main()
 {
 	clrscr();
 	int c;
 	char expr[100];
-	cin>>expr;
+	cout<<"Enter valid expression to calculate\n";
+	cin.getline(expr,100);
+	int x = validateChar(expr);
+	if(x==-1) {cout<<"Expression has invalid characters!\n"; return 1;}
+	x= validateExpr(expr);
+	if(x==-1) {cout<<"Expression could not be evaluated!\n"; return 1;}
 	//Insertion of parantheses correctly
 	parenth(expr);
 	//Infix with parantheses to postfix
 	makePostfix(expr);
     //Evaluation of postfix expr
 	c=evaluate();
-	if(c==-1) cout<<"Expression could not be evaluated";
+	if(c==-1) cout<<"Not enough memory!";
 	else cout<<c<<"\n";
+	return 0;
 }
-		/*1.Implement insertion of parentheses at correct place DONE
-		  2.Implement each of the three phases in separate functions
-		  3.Figure out two digit number :S otherwise lite
-		  4.Implement everything in Java
-		  5.Save in github and submit
-	   */
-	/*j=i;k=0;
-				char str[30];
-				while(post[j]>='0' && post[j]<='9')
-				{
-					str[k]=post[j]; ++j;++k;
-				}
-				str[k]='\0';
-				cout<<str<<getch();
-				lue=atoi(str);
-				*/
+	
